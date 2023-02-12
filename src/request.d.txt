@@ -1,0 +1,36 @@
+    const data = {
+      type: "Blusa",
+      category: "malha",
+      description: "Blusas que cabem no seu corpo",
+      models: [
+        {
+          id: new Date().getTime(),
+          tamanho: "P",
+          quantity: 2,
+          amount: 1050,
+          image: "string",
+        },
+
+        {
+          id: new Date().getTime(),
+          tamanho: "M",
+          quantity: 2,
+          amount: 1050,
+          image: "string",
+        },
+
+        {
+          id: new Date().getTime(),
+          tamanho: "G",
+          quantity: 2,
+          amount: 1050,
+          image: "string",
+        },
+      ],
+    };
+    fire()
+      .collection("category")
+      .add(data)
+      .then((h) => {
+        Alert.alert("suceessos");
+      });

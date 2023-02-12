@@ -1,13 +1,12 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Home } from "../pages/home";
-
-const { Navigator, Screen } = createNativeStackNavigator();
+import { useAuth } from "../hooks/AuthContext";
+import { LogIn } from "../pages/logIn";
+import { AppAuth } from "./AppAuth";
 
 export function Route() {
-  return (
-    <Navigator>
-      <Screen name="home" component={Home} />
-    </Navigator>
-  );
+  const { user } = useAuth();
+
+  console.log(user);
+
+  return user?.nome ? <AppAuth /> : <LogIn />;
 }
