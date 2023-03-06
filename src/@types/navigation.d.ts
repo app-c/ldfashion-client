@@ -11,12 +11,16 @@ export type OrderNavigationIndication = {
   id: string;
 };
 
+interface Item {
+  category: string;
+}
+
 export declare global {
   namespace ReactNavigation {
     interface RootParamList {
       home: IUser;
       login: undefined;
-      item: ICategory;
+      item: Item;
       buy: IModel;
       cart: IModel;
     }

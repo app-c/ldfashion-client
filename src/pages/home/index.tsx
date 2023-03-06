@@ -5,7 +5,7 @@ import fire from "@react-native-firebase/firestore";
 import { Banner } from "../../components/banner";
 import { Header } from "../../components/header";
 import { Tipo } from "../../components/tipo";
-import { ICategory, IType } from "../../dto";
+import { ICategory, IModel, IType } from "../../dto";
 
 import * as S from "./styles";
 
@@ -14,6 +14,8 @@ export function Home() {
   const [type, setType] = useState<IType[]>([]);
   const [category, setCategory] = useState<ICategory[]>([]);
   const [selected, setSelected] = useState("");
+
+  const [model, setModel] = useState<IModel[]>([]);
 
   const loadData = useCallback(() => {
     fire()
@@ -55,6 +57,19 @@ export function Home() {
           })
         );
       });
+
+    fire()
+      .collection("model")
+      .onSnapshot((h) => {
+        const rs = h.docs.map((p) => {
+          return {
+            ...p.data(),
+            id: p.id,
+          } as IModel;
+        });
+
+        setModel(rs);
+      });
   }, []);
 
   useEffect(() => {
@@ -64,12 +79,30 @@ export function Home() {
   const fil = useMemo(() => {
     const rs = category.filter((h) => h.type === selected);
 
-    return rs;
-  }, [category, selected]);
+    const lc = [];
+
+    rs.forEach((h) => {
+      let ob = null;
+
+      model.forEach((j) => {
+        if (j.category === h.category) {
+          ob = {
+            ...h,
+            img: j.image,
+          };
+        }
+      });
+
+      if (ob) {
+        lc.push(ob);
+      }
+    });
+    return lc;
+  }, [category, model, selected]);
 
   const handleNavigate = useCallback(
-    (item: ICategory) => {
-      navigate("item", item);
+    (item: string) => {
+      navigate("item", { category: item });
     },
     [navigate]
   );
@@ -104,8 +137,8 @@ export function Home() {
           <Banner
             title={h.category}
             text={h.description}
-            pres={() => handleNavigate(h)}
-            img={h.models[i].image}
+            pres={() => handleNavigate(h.category)}
+            img={h.img}
           />
         )}
       />

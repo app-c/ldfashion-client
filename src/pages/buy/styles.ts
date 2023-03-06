@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { Dimensions } from "react-native";
 import styled from "styled-components/native";
 import { cor } from "../../styles";
@@ -34,9 +35,9 @@ export const title = styled.Text`
   margin-bottom: 30px;
 `;
 
-export const imgBox = styled.View`
+export const imgBox = styled(Image)`
   background-color: ${cor.dark[2]};
-  height: ${w * 0.5}px;
+  height: ${w * 1}px;
 
   border-radius: 5px;
 `;
@@ -70,6 +71,11 @@ export const add = styled.View`
   width: ${w * 0.4}px;
 `;
 
+export const boxC = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
 export const addButon = styled.TouchableOpacity`
   width: 50px;
   height: 30px;
@@ -94,7 +100,7 @@ export const boxButon = styled.View`
 
   padding: 0 20px;
 
-  top: 100px;
+  margin-top: 20px;
 `;
 
 export const button = styled.TouchableOpacity<PropsBt>`

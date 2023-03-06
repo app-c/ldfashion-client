@@ -3,6 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable camelcase */
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import fire from "@react-native-firebase/firestore";
 import React, {
   createContext,
   useCallback,
@@ -21,6 +22,7 @@ interface AuthContexData {
   loading: boolean;
   signIn(credential: SignInCred): Promise<void>;
   signOut(): void;
+  token: string;
 }
 
 const keyUser = "@:ldfashion";
@@ -30,6 +32,7 @@ export const AuthContext = createContext<AuthContexData>({} as AuthContexData);
 export const AuthProvider: React.FC = ({ children }: any) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<SignInCred>(null);
+  const [token, setToken] = useState("");
 
   const LoadingUser = useCallback(async () => {
     setLoading(true);
@@ -48,6 +51,15 @@ export const AuthProvider: React.FC = ({ children }: any) => {
     const us = { nome, telefone };
     await AsyncStorage.setItem(keyUser, JSON.stringify(us));
     setData(us);
+  }, []);
+
+  useEffect(() => {
+    fire()
+      .collection("token")
+      .onSnapshot((h) => {
+        const rs = h.docs.map((h) => h.data());
+        setToken(rs[0].token);
+      });
   }, []);
 
   const signOut = useCallback(async () => {
@@ -90,6 +102,7 @@ export const AuthProvider: React.FC = ({ children }: any) => {
     <AuthContext.Provider
       value={{
         user: data,
+        token,
         loading,
         signIn,
         signOut,

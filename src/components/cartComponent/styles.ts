@@ -35,7 +35,7 @@ export const box = styled.View`
   justify-content: space-between;
 `;
 
-export const imgBox = styled.View`
+export const imgBox = styled.Image`
   background-color: ${cor.dark[3]};
   width: ${w * 0.4}px;
   height: ${w * 0.4}px;

@@ -11,8 +11,9 @@ import * as S from "./styles";
 import { useAuth } from "../../hooks/AuthContext";
 
 export function Cart() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [cart, setCart] = useState<IModel[]>([]);
+  const [qnt, setQnt] = useState(1);
 
   const [load, setLoad] = useState(false);
 
@@ -54,6 +55,7 @@ export function Cart() {
       const arrSelect = [...cart];
 
       if (item.qntBuy < item.quantity) {
+        setQnt(qnt + 1);
         const dt = {
           ...item,
           qntBuy: item.qntBuy + 1,
@@ -64,7 +66,7 @@ export function Cart() {
         setCart(arrSelect);
       }
     },
-    [cart]
+    [cart, qnt]
   );
 
   const minus = useCallback(
@@ -86,25 +88,56 @@ export function Cart() {
     [cart]
   );
 
-  const onlyBuy = useCallback((item: IModel) => {
-    setLoad(true);
-    try {
-      fire()
-        .collection("order")
-        .add(item)
-        .then(() => {
-          fire()
-            .collection("cart")
-            .doc(item.id)
-            .delete()
-            .then(() => setLoad(false))
-            .catch((h) => console.log(h));
-        });
-    } catch (err) {
-      setLoad(false);
-      console.log(err);
-    }
-  }, []);
+  const sendMessage = useCallback(async () => {
+    const message = {
+      to: token,
+      sound: "default",
+      title: "Ordem de compra",
+      body: `Cliente ${user.nome} está solicitando a compra de um novo produto`,
+      data: { someData: "goes here" },
+    };
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }, [token, user.nome]);
+
+  const onlyBuy = useCallback(
+    (item: IModel) => {
+      setLoad(true);
+
+      const rs = {
+        ...item,
+        amount: item.amount * qnt,
+      };
+      try {
+        fire()
+          .collection("order")
+          .add(rs)
+          .then(() => {
+            fire()
+              .collection("cart")
+              .doc(item.id)
+              .delete()
+              .then(() => {
+                setLoad(false);
+                sendMessage();
+              })
+              .catch((h) => console.log(h));
+          });
+      } catch (err) {
+        setLoad(false);
+        console.log(err);
+      }
+    },
+    [qnt]
+  );
 
   return (
     <S.container>

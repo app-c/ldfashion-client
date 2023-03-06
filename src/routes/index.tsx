@@ -6,7 +6,5 @@ import { AppAuth } from "./AppAuth";
 export function Route() {
   const { user } = useAuth();
 
-  console.log(user);
-
   return user?.nome ? <AppAuth /> : <LogIn />;
 }

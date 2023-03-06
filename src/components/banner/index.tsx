@@ -12,16 +12,14 @@ interface Props {
 export function Banner({ pres, title, img, text }: Props) {
   return (
     <S.container onPress={pres}>
-      <S.box>
-        <S.title>{title}</S.title>
-        <S.imgBox>
-          <S.text>{img}</S.text>
-        </S.imgBox>
-      </S.box>
+      <S.title>{title}</S.title>
+      <S.content>
+        <S.imgBox contentFit="contain" source={{ uri: img }} />
 
-      <S.boxText>
-        <S.text>{text}</S.text>
-      </S.boxText>
+        <S.boxText>
+          <S.text>{text}</S.text>
+        </S.boxText>
+      </S.content>
     </S.container>
   );
 }
